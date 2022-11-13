@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from .models import Tecnologias, Empresa
@@ -50,10 +50,21 @@ def nova_empresa(request):
 
 
 def empresas(request):
-    empresas = Empresa.objects.all()
 
+    tecnologias_filtrar = request.GET.get('tecnologias')
+    nome_filtrar = request.GET.get('nome')
+    empresas = Empresa.objects.all()
+    tecnologias = Tecnologias.objects.all()
+
+
+
+    if tecnologias_filtrar != None:
+        empresas = empresas.filter(tecnologias=tecnologias_filtrar)
+    if nome_filtrar != None:
+        empresas = empresas.filter(nome__icontains=nome_filtrar)
+    print(empresas)
     if request.method == "GET":
-        return render(request, "empresas.html",{'empresas' : empresas})
+        return render(request, "empresas.html",{'empresas' : empresas, 'tecnologias' : tecnologias})
 
 def excluir_empresa(request, id):
     empresa = Empresa.objects.get(id=id)
@@ -62,3 +73,6 @@ def excluir_empresa(request, id):
 
     return redirect('/home/empresas')
 
+def empresa(request, id):
+    empresa_unica = get_object_or_404(Empresa, id=id)
+    return render(request, 'empresa.html', {'empresa': empresa})
