@@ -79,3 +79,4 @@ def empresa(request, id):
     vagas = Vagas.objects.filter(empresa_id=id)
 
     return render(request, 'empresa.html', {'empresa':empresa_unica, 'tecnologias' : tecnologias, 'empresas' : empresas,'vagas':vagas})
+
